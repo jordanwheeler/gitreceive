@@ -31,13 +31,10 @@ FILES=
 while read -r files; do
   FILES="\$FILES \$files"
 done
-URL=http://vault.myshopify.io/git
-echo "----> Updating \$FILES"
+URL=http://vault.myshopify.io/pusher/notify
+echo "----> Updating from \$1 to \$2"
 curl \\
   -X 'POST' \\
-  -u fakeuser:fakepassword \\
-  -F "previous_sha=\$1" \\
-  -F "new_sha=\$2" \\
   -F "files=\$FILES" \\
   --silent \$URL
 EOF
