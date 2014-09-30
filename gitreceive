@@ -27,16 +27,18 @@ setup_receiver_script() {
   local receiver_path="$home_dir/receiver"
   cat > "$receiver_path" <<EOF
 #!/bin/bash
+FILES=
+while read -r files; do
+  FILES="\$FILES \$files"
+done
 URL=http://vault.myshopify.io/git
-echo "----> Posting to \$URL ..."
+echo "----> Updating \$FILES"
 curl \\
   -X 'POST' \\
   -u fakeuser:fakepassword \\
-  -F "repository=\$1" \\
-  -F "revision=\$2" \\
-  -F "username=\$3" \\
-  -F "fingerprint=\$4" \\
-  -F contents=@- \\
+  -F "previous_sha=\$1" \\
+  -F "new_sha=\$2" \\
+  -F "files=\$FILES" \\
   --silent \$URL
 EOF
   chmod +x "$receiver_path"
@@ -113,7 +115,7 @@ trigger_receiver() {
     # Only run this script for the master branch. You can remove this
     # if block if you wish to run it for others as well.
     [[ "$refname" == "refs/heads/master" ]] && \
-      git diff --name-only $newrev^^..$oldrev | "$home_dir/receiver" "$repo" "$newrev" "$user" 
+      git diff --name-only "$oldrev"^^.."$newrev" | "$home_dir/receiver" "$oldrev" "$newrev"
   done
 }
 
