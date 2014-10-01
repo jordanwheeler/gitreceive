@@ -32,7 +32,7 @@ while read -r files; do
   FILES="\$FILES \$files"
 done
 URL=http://vault.myshopify.io/pusher/notify
-echo "----> Updating from \$1 to \$2"
+echo "----> Updating \$FILES on vault.git"
 curl \\
   -X 'POST' \\
   -F "files=\$FILES" \\
@@ -112,7 +112,7 @@ trigger_receiver() {
     # Only run this script for the master branch. You can remove this
     # if block if you wish to run it for others as well.
     [[ "$refname" == "refs/heads/master" ]] && \
-      git diff --name-only "$oldrev".."$newrev" | "$home_dir/receiver" "$oldrev" "$newrev"
+      git diff --name-only "$oldrev".."$newrev" | "$home_dir/receiver"
   done
 }
 
