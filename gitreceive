@@ -77,6 +77,17 @@ parse_repo_from_ssh_command() {
   awk '{print $2}' | perl -pe 's/(?<!\\)'\''//g' | sed 's/\\'\''/'\''/g' | strip_root_slash
 }
 
+# Create a git-enabled folder ready to receive git activity, like `git push'
+ensure_bare_repo() {
+  declare repo_path="$1"
+  if [ ! -d "$repo_path" ]; then
+    mkdir -p "$repo_path"
+    cd "$repo_path"
+    git init --bare > /dev/null
+    cd - > /dev/null
+  fi
+}
+
 # Create a Git pre-receive hook in a git repo that runs `gitreceive hook' when the repo receives a new git push
 ensure_prereceive_hook() {
   declare repo_path="$1" home_dir="$2" self="$3"
@@ -134,17 +145,6 @@ main() {
       echo "$key" | generate_fingerprint
       ;;
 
-    # I made this public to set up the initial repo in the cookbook.  We don't want repos created on the fly.
-    ensure_bare_repo) # Create a git-enabled folder ready to receive git activity, like `git push'
-      declare repo_path="$2"
-      if [ ! -d "$repo_path" ]; then
-        mkdir -p "$repo_path"
-        cd "$repo_path"
-        git init --bare > /dev/null
-        cd - > /dev/null
-      fi
-      ;;
-
   # Internal commands
 
     # Called by the 'forced command' when the git user first authenticates against the server
@@ -154,6 +154,7 @@ main() {
       export RECEIVE_FINGERPRINT="$fingerprint"
       export RECEIVE_REPO="$(echo "$SSH_ORIGINAL_COMMAND" | parse_repo_from_ssh_command)"
       local repo_path="$GITHOME/$RECEIVE_REPO"
+      ensure_bare_repo "$repo_path"
       ensure_prereceive_hook "$repo_path" "$GITHOME" "$SELF"
       cd "$GITHOME"
       # $SSH_ORIGINAL_COMMAND is set by `sshd'. It stores the originally intended command to be run by `git push'. In
