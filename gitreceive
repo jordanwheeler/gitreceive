@@ -1,8 +1,8 @@
 #!/bin/bash
 
 readonly GITUSER="${GITUSER:-vault}"
-readonly GITHOME="/home/newgit"
-readonly USERDIR="/home/vault"
+readonly GITHOME="/data/wiki/root"
+readonly USERDIR="/u/apps/vault"
 
 # Given a relative path, calculate the absolute path
 absolute_path() {
@@ -18,7 +18,6 @@ setup_git_user() {
   declare home_dir="$1" git_user="$2" user_dir="$3"
   useradd -d "$user_dir" "$git_user" || true
   mkdir -p "$user_dir/.ssh"
-  mkdir -p "$home_dir"
   touch "$user_dir/.ssh/authorized_keys"
   chown -R "$git_user" "$home_dir"
 }
