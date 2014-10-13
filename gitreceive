@@ -1,7 +1,8 @@
 #!/bin/bash
 
-readonly GITUSER="${GITUSER:-git}"
-readonly GITHOME="/home/$GITUSER"
+readonly GITUSER="${GITUSER:-vault}"
+readonly GITHOME="/home/newgit"
+readonly USERDIR="/home/vault"
 
 # Given a relative path, calculate the absolute path
 absolute_path() {
@@ -14,10 +15,11 @@ absolute_path() {
 # Create a Git user on the system, with home directory and an `.authorized_keys' file that contains the public keys
 # for all users that are allowed to push their repos here. User defaults to $GITUSER, which defaults to 'git'.
 setup_git_user() {
-  declare home_dir="$1" git_user="$2"
-  useradd -d "$home_dir" "$git_user" || true
-  mkdir -p "$home_dir/.ssh"
-  touch "$home_dir/.ssh/authorized_keys"
+  declare home_dir="$1" git_user="$2" user_dir="$3"
+  useradd -d "$user_dir" "$git_user" || true
+  mkdir -p "$user_dir/.ssh"
+  mkdir -p "$home_dir"
+  touch "$user_dir/.ssh/authorized_keys"
   chown -R "$git_user" "$home_dir"
 }
 
@@ -133,7 +135,7 @@ main() {
   # Public commands
 
     init) # gitreceive init
-      setup_git_user "$GITHOME" "$GITUSER"
+      setup_git_user "$GITHOME" "$GITUSER" "$USERDIR"
       setup_receiver_script "$GITHOME" "$GITUSER"
       echo "Created receiver script in $GITHOME for user '$GITUSER'."
       ;;
