@@ -1,7 +1,7 @@
 #!/bin/bash
 
-readonly GITUSER="${GITUSER:-vault}"
-readonly GITHOME="/data/wiki/root"
+readonly GITUSER="${GITUSER:-git}"
+readonly GITHOME="/home/newgit"
 
 # Given a relative path, calculate the absolute path
 absolute_path() {
