@@ -19,8 +19,7 @@ setup_git_user() {
   useradd -d "$user_dir" "$git_user" || true
   mkdir -p "$user_dir/.ssh"
   touch "$user_dir/.ssh/authorized_keys"
-  usermod -a -G git vault
-  chown -R :git "$home_dir/.git"
+  usermod -a -G vault git
   chmod 771 -R "$home_dir/.git"
 }
 
