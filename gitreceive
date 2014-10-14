@@ -19,7 +19,9 @@ setup_git_user() {
   useradd -d "$user_dir" "$git_user" || true
   mkdir -p "$user_dir/.ssh"
   touch "$user_dir/.ssh/authorized_keys"
-  chown -R :git "$home_dir"
+  usermod -a -G git vault
+  chown -R :git "$home_dir/.git"
+  chmod 771 -R "$home_dir/.git"
 }
 
 # Creates a sample receiver script. This is the script that is triggered after a successful push.
