@@ -90,12 +90,12 @@ ensure_bare_repo() {
 
 # Create a Git pre-receive hook in a git repo that runs `gitreceive hook' when the repo receives a new git push
 ensure_prereceive_hook() {
-  declare repo_path="$1" home_dir="$2" self="$3"
+  declare repo_path="$1"
   local hook_path="$repo_path/hooks/pre-receive"
-  cd "$home_dir"
+  cd "$repo_path"
   cat > "$hook_path" <<EOF
 #!/bin/bash
-cat | $self hook
+cat | /usr/local/bin/gitreceive hook
 EOF
   chmod +x "$hook_path"
   cd - > /dev/null
@@ -136,6 +136,7 @@ main() {
       setup_git_user "$GITHOME" "$GITUSER" "$USERDIR"
       setup_receiver_script "$GITHOME" "$GITUSER"
       echo "Created receiver script in $GITHOME for user '$GITUSER'."
+      ensure_prereceive_hook "$GITHOME/.git"
       ;;
 
     upload-key) # sudo gitreceive upload-key <username>
@@ -155,7 +156,6 @@ main() {
       export RECEIVE_REPO="$(echo "$SSH_ORIGINAL_COMMAND" | parse_repo_from_ssh_command)"
       local repo_path="$GITHOME/$RECEIVE_REPO"
       ensure_bare_repo "$repo_path"
-      ensure_prereceive_hook "$repo_path" "$GITHOME" "$SELF"
       cd "$GITHOME"
       # $SSH_ORIGINAL_COMMAND is set by `sshd'. It stores the originally intended command to be run by `git push'. In
       # our case it is overridden by the 'forced command', so we need to reinstate it now that the 'forced command' has
