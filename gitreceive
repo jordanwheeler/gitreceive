@@ -15,8 +15,8 @@ absolute_path() {
 # Create a Git user on the system, with home directory and an `.authorized_keys' file that contains the public keys
 # for all users that are allowed to push their repos here. User defaults to $GITUSER, which defaults to 'git'.
 setup_git_user() {
-  declare home_dir="$1" git_user="$2" user_dir="$3"
-  useradd -G vault -d "$user_dir" "$git_user" || true
+  declare git_user="$1" user_dir="$2"
+  useradd -m "$git_user"
   mkdir -p "$user_dir/.ssh"
   touch "$user_dir/.ssh/authorized_keys"
 }
@@ -133,7 +133,7 @@ main() {
   # Public commands
 
     init) # gitreceive init
-      setup_git_user "$GITHOME" "$GITUSER" "$USERDIR"
+      setup_git_user "$GITUSER" "$USERDIR"
       setup_receiver_script "$GITHOME" "$GITUSER"
       echo "Created receiver script in $GITHOME for user '$GITUSER'."
       ensure_prereceive_hook "$GITHOME/.git"
