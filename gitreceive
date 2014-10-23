@@ -169,6 +169,8 @@ main() {
       ;;
 
     *)
+      find "$GITHOME/.git" -type d -exec chmod g+ws {} \;
+      find "$GITHOME/.git" -type f -exec chmod g+w {} \;
       echo "Usage: gitreceive <command> [options]"
       ;;
   esac
