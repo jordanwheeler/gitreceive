@@ -168,10 +168,7 @@ main() {
     hook)
       trigger_receiver "$RECEIVE_REPO" "$RECEIVE_USER" "$RECEIVE_FINGERPRINT" "$GITHOME" | strip_remote_prefix
       ;;
-
     *)
-      find "$GITHOME/.git" -type d -exec chmod g+ws {} \;
-      find "$GITHOME/.git" -type f -exec chmod g+w {} \;
       echo "Usage: gitreceive <command> [options]"
       ;;
   esac
