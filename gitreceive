@@ -111,8 +111,9 @@ trigger_receiver() {
   while read oldrev newrev refname; do
     # Only run this script for the master branch. You can remove this
     # if block if you wish to run it for others as well.
-    [[ "$refname" == "refs/heads/master" ]] && \
+    if [ "$refname" == "refs/heads/master" ] && [ "$oldrev" != "0000000000000000000000000000000000000000" ]; then
       git diff --name-only "$oldrev".."$newrev" | "$home_dir/receiver"
+    fi
   done
 }
 
